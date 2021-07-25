@@ -1,18 +1,18 @@
-import Head from 'next/head';
-import Header from '../components/Header';
-import Icon from '@material-tailwind/react/Icon';
-import Button from '@material-tailwind/react/Button';
+import Head from "next/head";
+import Header from "../components/Header";
+import Icon from "@material-tailwind/react/Icon";
+import Button from "@material-tailwind/react/Button";
 import Image from "next/image";
 import { getSession, useSession } from "next-auth/client";
-import Login from '../components/Login';
+import Login from "../components/Login";
 import Modal from "@material-tailwind/react/Modal";
 import ModalBody from "@material-tailwind/react/ModalBody";
 import ModalFooter from "@material-tailwind/react/ModalFooter";
 import { useState } from "react";
 import { db } from "../firebase";
-import firebase from 'firebase';
-import { useCollectionOnce, } from "react-firebase-hooks/firestore";
-import DocumentRow from '../components/DocumentRow';
+import firebase from "firebase";
+import { useCollectionOnce } from "react-firebase-hooks/firestore";
+import DocumentRow from "../components/DocumentRow";
 
 export default function Home() {
   const [session] = useSession();
@@ -23,35 +23,28 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [snapshot] = useCollectionOnce(
     db
-      .collection('userDocs')
+      .collection("userDocs")
       .doc(session.user.email)
-      .collection('docs').
-      orderBy("timestamp", "desc")
+      .collection("docs")
+      .orderBy("timestamp", "desc")
   );
 
   const createDocument = () => {
     if (!input) return;
 
-    db.collection('userDocs')
-    .doc(session.user.email)
-    .collection('docs')
-    .add({
+    db.collection("userDocs").doc(session.user.email).collection("docs").add({
       fileName: input,
       timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
 
-    setInput('');
+    setInput("");
     setShowModal(false);
   };
-
+  console.log(snapshot);
   const modal = (
-    <Modal
-      size="sm"
-      active={showModal}
-      toggler={() => setShowModal(false)}
-    >
+    <Modal size="sm" active={showModal} toggler={() => setShowModal(false)}>
       <ModalBody>
-        <input 
+        <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           type="text"
@@ -62,19 +55,19 @@ export default function Home() {
       </ModalBody>
       <ModalFooter>
         <Button
-        color="blue"
-        buttonType="link"
-        onClick={(e) => setShowModal(false)}
-        ripple="dark"
+          color="blue"
+          buttonType="link"
+          onClick={(e) => setShowModal(false)}
+          ripple="dark"
         >
           Cancel
         </Button>
-        <Button color='blue' onClick={createDocument} ripple="light">
+        <Button color="blue" onClick={createDocument} ripple="light">
           Create
         </Button>
       </ModalFooter>
     </Modal>
-  )
+  );
 
   return (
     <div>
@@ -89,7 +82,7 @@ export default function Home() {
       <section className="bg-[#F8F9FA] pb-10 px-10">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between py-6">
-            <h2 className='text-gray-700'>Start a new document</h2>
+            <h2 className="text-gray-700">Start a new document</h2>
 
             <Button
               color="gray"
@@ -98,17 +91,19 @@ export default function Home() {
               ripple="dark"
               className="border-0"
             >
-              <Icon name="more_vert" size="3xl"/>
+              <Icon name="more_vert" size="3xl" />
             </Button>
           </div>
           <div>
-            <div onClick ={() => setShowModal(true)} className='relative h-52 w-40 border-2 cursor-pointer hover:border-blue-700'>
-            <Image src='https://links.papareact.com/pju'
-            layout="fill" />
+            <div
+              onClick={() => setShowModal(true)}
+              className="relative h-52 w-40 border-2 cursor-pointer hover:border-blue-700"
+            >
+              <Image src="https://links.papareact.com/pju" layout="fill" />
             </div>
 
             <p className="ml-2 mt-2 font-semibold text-sm text-gray-700">
-             Blank
+              Blank
             </p>
           </div>
         </div>
@@ -121,7 +116,8 @@ export default function Home() {
             <Icon name="folder" size="3xl" color="gray" />
           </div>
         </div>
-       {snapshot?.docs.map((doc) => (
+        
+        {snapshot?.docs.map((doc) => (
           <DocumentRow
             key={doc.id}
             id={doc.id}
@@ -141,5 +137,5 @@ export async function getServerSideProps(context) {
     props: {
       session,
     },
-  }
+  };
 }
