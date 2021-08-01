@@ -5,6 +5,8 @@ import { useDocumentOnce } from "react-firebase-hooks/firestore";
 import { db } from "../../firebase";
 import Icon from "@material-tailwind/react/Icon";
 import Button from "@material-tailwind/react/Button";
+import TextEditor from "../../components/TextEditor";
+import { getSession } from "next-auth/client";
 
 function Doc() {
   const [session] = useSession();
@@ -58,8 +60,19 @@ function Doc() {
           alt=""
         />
       </header>
+      <TextEditor />
     </div>
   );
 }
 
 export default Doc;
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  return {
+    props: {
+      session,
+    },
+  };
+}
