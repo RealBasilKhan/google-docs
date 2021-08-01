@@ -4,6 +4,7 @@ import Login from "../../components/Login";
 import { useDocumentOnce } from "react-firebase-hooks/firestore";
 import { db } from "../../firebase";
 import Icon from "@material-tailwind/react/Icon";
+import Button from "@material-tailwind/react/Button";
 
 function Doc() {
   const [session] = useSession();
@@ -13,8 +14,13 @@ function Doc() {
   const { id } = router.query;
 
   const [snapshot, loadingSnapshot] = useDocumentOnce(
-    db.collection("userDocs").doc(session.user.email).collection("doc").doc(id)
+    db.collection("userDocs").doc(session.user.email).collection("docs").doc(id)
   );
+
+  // Redirect if user tries to access a URL without logging in...
+  /* if (!loadingSnapshot && snapshot?.data()?.fileName) {
+    router.replace("/");
+  } */
 
   return (
     <div>
@@ -25,7 +31,32 @@ function Doc() {
 
         <div className="flex-grow px-2">
           <h2>{snapshot?.data()?.fileName}</h2>
+          <div className="flex items-center text-sm space-x-1 -ml-1 h-8 text-gray-600">
+            <p className="option">File</p>
+            <p className="option">Edit</p>
+            <p className="option">View</p>
+            <p className="option">Insert</p>
+            <p className="option">Format</p>
+            <p className="option">Tools</p>
+          </div>
         </div>
+        <Button
+          color="lightBlue"
+          buttonType="filled"
+          size="regular"
+          className="hidden md:!inline-flex h10"
+          rounded={false}
+          block={false}
+          iconOnly={false}
+          ripple="light"
+        >
+          <Icon name="people" size="md" /> SHARE
+        </Button>
+        <img
+          className="cursor-point rounded-full h-10 w-10 ml-2"
+          src={session.user.image}
+          alt=""
+        />
       </header>
     </div>
   );
