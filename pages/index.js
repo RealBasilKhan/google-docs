@@ -39,8 +39,7 @@ export default function Home() {
     setInput("");
     setShowModal(false);
   };
-
-  console.log(snapshot);
+  
   const modal = (
     <Modal size="sm" active={showModal} toggler={() => setShowModal(false)}>
       <ModalBody>
